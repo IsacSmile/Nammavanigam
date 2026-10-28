@@ -69,8 +69,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="antialiased bg-white text-brand-navy min-h-screen" suppressHydrationWarning>
+      <head>
         <GoogleAnalytics />
+      </head>
+      <body className="antialiased bg-white text-brand-navy min-h-screen" suppressHydrationWarning>
         <SessionProvider>
           {children}
           <BookAppointmentButton />

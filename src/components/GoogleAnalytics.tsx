@@ -4,24 +4,22 @@ import Script from "next/script";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
-const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
-const GA_ID_REGEX = /^G-[A-Z0-9]{6,12}$/;
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-72YCQ2WBQ9";
+const GA_ID_REGEX = /^G-[A-Z0-9]{6,14}$/;
 
 export default function GoogleAnalytics() {
   const pathname = usePathname();
 
-  const isProduction = process.env.NODE_ENV === "production";
   const isValidId = Boolean(GA_MEASUREMENT_ID && GA_ID_REGEX.test(GA_MEASUREMENT_ID));
-  const isEnabled = isProduction && isValidId;
 
   useEffect(() => {
-    if (!isEnabled || !GA_MEASUREMENT_ID) return;
+    if (!isValidId || !GA_MEASUREMENT_ID) return;
     (window as any)[`ga-disable-${GA_MEASUREMENT_ID}`] = pathname
       ? pathname.indexOf("/admin") === 0
       : false;
-  }, [pathname, isEnabled]);
+  }, [pathname, isValidId]);
 
-  if (!isEnabled || !GA_MEASUREMENT_ID) {
+  if (!isValidId || !GA_MEASUREMENT_ID) {
     return null;
   }
 
