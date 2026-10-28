@@ -8,10 +8,29 @@ import SearchClient from "./SearchClient";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "Search Business Listings | Namma Vanigam",
+    absolute: "Search Business Listings in Tamil Nadu | Namma Vanigam",
   },
   description:
     "Filter and search verified local business listings, shops, services, and locations across Tamil Nadu.",
+  alternates: {
+    canonical: "/search",
+  },
+  openGraph: {
+    title: "Search Business Listings in Tamil Nadu | Namma Vanigam",
+    description:
+      "Filter and search verified local business listings, shops, services, and locations across Tamil Nadu.",
+    url: "/search",
+    siteName: "Namma Vanigam",
+    type: "website",
+    images: [
+      {
+        url: "/namma-vaniga-logo.webp",
+        width: 1264,
+        height: 797,
+        alt: "Search Businesses in Tamil Nadu - Namma Vanigam",
+      },
+    ],
+  },
 };
 
 export const revalidate = 60; // Revalidate static data every 60 seconds

@@ -16,5 +16,6 @@ export default function robots(): MetadataRoute.Robots {
       disallow: ["/admin/", "/api/", "/dashboard/", "/my-businesses"],
     },
     sitemap: `${baseUrl}/sitemap.xml`,
+    host: baseUrl,
   };
 }

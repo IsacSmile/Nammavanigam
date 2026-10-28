@@ -44,9 +44,13 @@ export async function generateMetadata({
   return {
     title: { absolute: title },
     description,
+    alternates: {
+      canonical: `/business/${business.slug}`,
+    },
     openGraph: {
       title,
       description,
+      url: `/business/${business.slug}`,
       images: ogImage ? [{ url: ogImage, alt: business.name }] : [],
       type: "website",
       siteName: "Namma Vanigam",
@@ -178,6 +182,14 @@ export default async function BusinessProfilePage({
     return rest;
   });
 
+  const rawBaseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
+    (process.env.NEXTAUTH_URL && !process.env.NEXTAUTH_URL.includes("localhost")
+      ? process.env.NEXTAUTH_URL
+      : "https://nammavanigam.online");
+  const baseUrl = rawBaseUrl.replace(/\/$/, "");
+
   const bAny = business as any;
   const validatedSocialUrls = (bAny.businessSocialLinks || [])
     .map((s: any) => normalizeSocialUrl(s.platform, s.url))
@@ -188,13 +200,62 @@ export default async function BusinessProfilePage({
     ? `${bAny.location.name}, ${bAny.location.parent.name}`
     : bAny.location?.name;
 
-  const jsonLd = {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: baseUrl,
+      },
+      ...(bAny.category
+        ? [
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: bAny.category.name,
+              item: `${baseUrl}/category/${bAny.category.slug}`,
+            },
+            {
+              "@type": "ListItem",
+              position: 3,
+              name: bAny.name,
+              item: `${baseUrl}/business/${bAny.slug}`,
+            },
+          ]
+        : [
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: bAny.name,
+              item: `${baseUrl}/business/${bAny.slug}`,
+            },
+          ]),
+    ],
+  };
+
+  const localBusinessJsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
+    "@id": `${baseUrl}/business/${bAny.slug}`,
     name: bAny.name,
+    url: `${baseUrl}/business/${bAny.slug}`,
     description: bAny.description || undefined,
     image: bAny.businessPhotos?.[0]?.imageUrl || undefined,
     telephone: bAny.phone || undefined,
+    email: bAny.email || undefined,
+    priceRange: "₹₹",
+    ...(bAny.latitude && bAny.longitude
+      ? {
+          geo: {
+            "@type": "GeoCoordinates",
+            latitude: bAny.latitude,
+            longitude: bAny.longitude,
+          },
+        }
+      : {}),
     address: bAny.address
       ? {
           "@type": "PostalAddress",
@@ -211,7 +272,11 @@ export default async function BusinessProfilePage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(localBusinessJsonLd) }}
       />
       <BusinessProfileClient
         business={formattedBusiness as any}

@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getDistrictsWithCounts, getTopCategoryDistrictPairs } from "@/lib/locations";
+import { safeJsonLd } from "@/lib/json-ld";
 import Header from "@/components/Header";
 import HeroSearch from "@/components/HeroSearch";
 import Footer from "@/components/Footer";
@@ -20,25 +21,31 @@ import {
 
 export const metadata: Metadata = {
   title: {
-    absolute: "Namma Vanigam - Local Business Directory",
+    absolute: "Namma Vanigam | Tamil Nadu Local Business Directory & Services",
   },
   description:
-    "Find top-rated businesses, shops, services, doctors, and restaurants. List your business free.",
+    "Discover verified local businesses, shops, doctors, restaurants, IT companies, and services across Tamil Nadu. Search by district, taluk, or category. Add your business free.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Namma Vanigam - Local Business Directory",
+    title: "Namma Vanigam | Tamil Nadu Local Business Directory & Services",
     description:
-      "Find top-rated businesses, shops, services, doctors, and restaurants. List your business free.",
+      "Discover verified local businesses, shops, doctors, restaurants, IT companies, and services across Tamil Nadu. Search by district, taluk, or category. Add your business free.",
     url: "/",
     siteName: "Namma Vanigam",
     images: [
       {
         url: "/namma-vaniga-logo.webp",
-        width: 1536,
-        height: 1024,
-        alt: "Namma Vanigam",
+        width: 1264,
+        height: 797,
+        alt: "Namma Vanigam - Tamil Nadu Business Directory",
+      },
+      {
+        url: "/icon.png",
+        width: 512,
+        height: 512,
+        alt: "Namma Vanigam Emblem",
       },
     ],
   },
@@ -132,8 +139,71 @@ export default async function HomePage() {
     slug: d.slug,
   }));
 
+  const rawBaseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
+    (process.env.NEXTAUTH_URL && !process.env.NEXTAUTH_URL.includes("localhost")
+      ? process.env.NEXTAUTH_URL
+      : "https://nammavanigam.online");
+  const baseUrl = rawBaseUrl.replace(/\/$/, "");
+
+  const homeJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${baseUrl}/#website`,
+        url: baseUrl,
+        name: "Namma Vanigam",
+        description: "Tamil Nadu's dedicated local business directory platform.",
+        potentialAction: {
+          "@type": "SearchAction",
+          target: {
+            "@type": "EntryPoint",
+            urlTemplate: `${baseUrl}/search?q={search_term_string}`,
+          },
+          "query-input": "required name=search_term_string",
+        },
+        inLanguage: "en-IN",
+      },
+      {
+        "@type": "Organization",
+        "@id": `${baseUrl}/#organization`,
+        name: "Namma Vanigam",
+        url: baseUrl,
+        logo: {
+          "@type": "ImageObject",
+          url: `${baseUrl}/icon.png`,
+          width: 512,
+          height: 512,
+          caption: "Namma Vanigam",
+        },
+        image: `${baseUrl}/namma-vaniga-logo.webp`,
+        description:
+          "Tamil Nadu's dedicated local business directory platform connecting customers with trusted local shops, healthcare providers, restaurants, and professionals.",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: "Chennai",
+          addressRegion: "Tamil Nadu",
+          addressCountry: "IN",
+        },
+        contactPoint: {
+          "@type": "ContactPoint",
+          telephone: "+919744774668",
+          contactType: "customer service",
+          areaServed: "IN",
+          availableLanguage: ["en", "ta"],
+        },
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(homeJsonLd) }}
+      />
       {/* 1. Header Section */}
       <Header />
 

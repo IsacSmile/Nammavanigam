@@ -73,38 +73,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }));
 
-    // 3. Active Locations: all 14 district pages, and taluk pages only when they have at least one approved listing
-    const [districts, taluksWithListings] = await Promise.all([
-      prisma.location.findMany({
-        where: { parentId: null, status: "active" },
-        select: { slug: true },
-      }),
-      prisma.location.findMany({
-        where: {
-          parentId: { not: null },
-          status: "active",
-          businesses: {
-            some: { status: "approved" },
-          },
-        },
-        select: { slug: true },
-      }),
-    ]);
+    // 3. Active Locations: All 38 Tamil Nadu districts and 313 taluks
+    const locations = await prisma.location.findMany({
+      where: { status: "active" },
+      select: { slug: true, parentId: true },
+    });
 
-    const locationRoutes: MetadataRoute.Sitemap = [
-      ...districts.map((dist) => ({
-        url: `${baseUrl}/location/${dist.slug}`,
-        lastModified: new Date(),
-        changeFrequency: "weekly" as const,
-        priority: 0.8,
-      })),
-      ...taluksWithListings.map((taluk) => ({
-        url: `${baseUrl}/location/${taluk.slug}`,
-        lastModified: new Date(),
-        changeFrequency: "weekly" as const,
-        priority: 0.7,
-      })),
-    ];
+    const locationRoutes: MetadataRoute.Sitemap = locations.map((loc) => ({
+      url: `${baseUrl}/location/${loc.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: loc.parentId === null ? 0.8 : 0.7,
+    }));
 
     return [...routes, ...categoryRoutes, ...locationRoutes, ...businessRoutes];
   } catch (error) {

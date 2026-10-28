@@ -15,15 +15,46 @@ const baseUrl = rawBaseUrl.replace(/\/$/, "");
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: "Namma Vanigam - Local Business Directory",
+    default: "Namma Vanigam | Tamil Nadu Local Business Directory & Services",
     template: "%s | Namma Vanigam",
   },
   description:
-    "Find verified local businesses, shops, doctors, restaurants, and services. List your business free.",
+    "Find verified local businesses, shops, healthcare providers, restaurants, IT services, and professionals across all 38 districts of Tamil Nadu. List your business free.",
+  keywords: [
+    "Namma Vanigam",
+    "Tamil Nadu business directory",
+    "Chennai businesses",
+    "Coimbatore business listings",
+    "Madurai local services",
+    "Salem shops",
+    "Tiruchirappalli directory",
+    "Tamil Nadu classifieds",
+    "local business listings Tamil Nadu",
+    "doctors in Chennai",
+    "top restaurants Tamil Nadu",
+    "IT companies Chennai",
+    "free business listing Tamil Nadu",
+    "b2b portal Tamil Nadu",
+    "verified businesses Tamil Nadu",
+  ],
+  authors: [{ name: "Namma Vanigam", url: baseUrl }],
+  creator: "Namma Vanigam",
+  publisher: "Namma Vanigam",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  alternates: {
+    canonical: baseUrl,
+    languages: {
+      "en-IN": baseUrl,
+    },
+  },
   openGraph: {
-    title: "Namma Vanigam - Local Business Directory",
+    title: "Namma Vanigam | Tamil Nadu Local Business Directory & Services",
     description:
-      "Find verified local businesses, shops, doctors, restaurants, and services. List your business free.",
+      "Find verified local businesses, shops, healthcare providers, restaurants, and professionals across all 38 districts of Tamil Nadu. List your business free.",
     url: baseUrl,
     siteName: "Namma Vanigam",
     locale: "en_IN",
@@ -31,21 +62,38 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/namma-vaniga-logo.webp",
-        width: 1536,
-        height: 1024,
-        alt: "Namma Vanigam",
+        width: 1264,
+        height: 797,
+        alt: "Namma Vanigam - Tamil Nadu Business Directory",
+      },
+      {
+        url: "/icon.png",
+        width: 512,
+        height: 512,
+        alt: "Namma Vanigam Icon",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Namma Vanigam - Local Business Directory",
-    description: "Find verified local businesses and services.",
+    title: "Namma Vanigam | Tamil Nadu Local Business Directory",
+    description:
+      "Discover verified local businesses, shops, and services across Tamil Nadu.",
     images: ["/namma-vaniga-logo.webp"],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
   },
   icons: {
     icon: [
