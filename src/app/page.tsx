@@ -49,6 +49,13 @@ export const metadata: Metadata = {
       },
     ],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Namma Vanigam | Tamil Nadu Local Business Directory & Services",
+    description:
+      "Discover verified local businesses, shops, doctors, restaurants, IT companies, and services across Tamil Nadu. Search by district, taluk, or category. Add your business free.",
+    images: ["/namma-vaniga-logo.webp"],
+  },
 };
 
 export const revalidate = 60; // Revalidate page every 60 seconds
