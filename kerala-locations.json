@@ -1,0 +1,536 @@
+{
+  "source": "EnteBusiness_Kerala_Location_Master.xlsx",
+  "districts": 14,
+  "taluks": 74,
+  "slugRule": "lowercase, non-alphanumerics become hyphens; a taluk with the same name as its district gets the suffix -taluk",
+  "locations": [
+    {
+      "name": "Thiruvananthapuram",
+      "slug": "thiruvananthapuram",
+      "parentSlug": null,
+      "sortOrder": 1
+    },
+    {
+      "name": "Thiruvananthapuram",
+      "slug": "thiruvananthapuram-taluk",
+      "parentSlug": "thiruvananthapuram",
+      "sortOrder": 1
+    },
+    {
+      "name": "Neyyattinkara",
+      "slug": "neyyattinkara",
+      "parentSlug": "thiruvananthapuram",
+      "sortOrder": 2
+    },
+    {
+      "name": "Nedumangad",
+      "slug": "nedumangad",
+      "parentSlug": "thiruvananthapuram",
+      "sortOrder": 3
+    },
+    {
+      "name": "Chirayinkeezhu",
+      "slug": "chirayinkeezhu",
+      "parentSlug": "thiruvananthapuram",
+      "sortOrder": 4
+    },
+    {
+      "name": "Varkala",
+      "slug": "varkala",
+      "parentSlug": "thiruvananthapuram",
+      "sortOrder": 5
+    },
+    {
+      "name": "Kattakada",
+      "slug": "kattakada",
+      "parentSlug": "thiruvananthapuram",
+      "sortOrder": 6
+    },
+    {
+      "name": "Kollam",
+      "slug": "kollam",
+      "parentSlug": null,
+      "sortOrder": 2
+    },
+    {
+      "name": "Kollam",
+      "slug": "kollam-taluk",
+      "parentSlug": "kollam",
+      "sortOrder": 1
+    },
+    {
+      "name": "Kunnathur",
+      "slug": "kunnathur",
+      "parentSlug": "kollam",
+      "sortOrder": 2
+    },
+    {
+      "name": "Karunagappally",
+      "slug": "karunagappally",
+      "parentSlug": "kollam",
+      "sortOrder": 3
+    },
+    {
+      "name": "Kottarakkara",
+      "slug": "kottarakkara",
+      "parentSlug": "kollam",
+      "sortOrder": 4
+    },
+    {
+      "name": "Punalur",
+      "slug": "punalur",
+      "parentSlug": "kollam",
+      "sortOrder": 5
+    },
+    {
+      "name": "Pathanapuram",
+      "slug": "pathanapuram",
+      "parentSlug": "kollam",
+      "sortOrder": 6
+    },
+    {
+      "name": "Pathanamthitta",
+      "slug": "pathanamthitta",
+      "parentSlug": null,
+      "sortOrder": 3
+    },
+    {
+      "name": "Adoor",
+      "slug": "adoor",
+      "parentSlug": "pathanamthitta",
+      "sortOrder": 1
+    },
+    {
+      "name": "Kozhencherry",
+      "slug": "kozhencherry",
+      "parentSlug": "pathanamthitta",
+      "sortOrder": 2
+    },
+    {
+      "name": "Mallappally",
+      "slug": "mallappally",
+      "parentSlug": "pathanamthitta",
+      "sortOrder": 3
+    },
+    {
+      "name": "Ranni",
+      "slug": "ranni",
+      "parentSlug": "pathanamthitta",
+      "sortOrder": 4
+    },
+    {
+      "name": "Thiruvalla",
+      "slug": "thiruvalla",
+      "parentSlug": "pathanamthitta",
+      "sortOrder": 5
+    },
+    {
+      "name": "Alappuzha",
+      "slug": "alappuzha",
+      "parentSlug": null,
+      "sortOrder": 4
+    },
+    {
+      "name": "Cherthala",
+      "slug": "cherthala",
+      "parentSlug": "alappuzha",
+      "sortOrder": 1
+    },
+    {
+      "name": "Ambalappuzha",
+      "slug": "ambalappuzha",
+      "parentSlug": "alappuzha",
+      "sortOrder": 2
+    },
+    {
+      "name": "Kuttanad",
+      "slug": "kuttanad",
+      "parentSlug": "alappuzha",
+      "sortOrder": 3
+    },
+    {
+      "name": "Karthikappally",
+      "slug": "karthikappally",
+      "parentSlug": "alappuzha",
+      "sortOrder": 4
+    },
+    {
+      "name": "Chengannur",
+      "slug": "chengannur",
+      "parentSlug": "alappuzha",
+      "sortOrder": 5
+    },
+    {
+      "name": "Mavelikkara",
+      "slug": "mavelikkara",
+      "parentSlug": "alappuzha",
+      "sortOrder": 6
+    },
+    {
+      "name": "Kottayam",
+      "slug": "kottayam",
+      "parentSlug": null,
+      "sortOrder": 5
+    },
+    {
+      "name": "Changanassery",
+      "slug": "changanassery",
+      "parentSlug": "kottayam",
+      "sortOrder": 1
+    },
+    {
+      "name": "Kottayam",
+      "slug": "kottayam-taluk",
+      "parentSlug": "kottayam",
+      "sortOrder": 2
+    },
+    {
+      "name": "Vaikom",
+      "slug": "vaikom",
+      "parentSlug": "kottayam",
+      "sortOrder": 3
+    },
+    {
+      "name": "Meenachil",
+      "slug": "meenachil",
+      "parentSlug": "kottayam",
+      "sortOrder": 4
+    },
+    {
+      "name": "Kanjirappally",
+      "slug": "kanjirappally",
+      "parentSlug": "kottayam",
+      "sortOrder": 5
+    },
+    {
+      "name": "Idukki",
+      "slug": "idukki",
+      "parentSlug": null,
+      "sortOrder": 6
+    },
+    {
+      "name": "Devikulam",
+      "slug": "devikulam",
+      "parentSlug": "idukki",
+      "sortOrder": 1
+    },
+    {
+      "name": "Udumbanchola",
+      "slug": "udumbanchola",
+      "parentSlug": "idukki",
+      "sortOrder": 2
+    },
+    {
+      "name": "Thodupuzha",
+      "slug": "thodupuzha",
+      "parentSlug": "idukki",
+      "sortOrder": 3
+    },
+    {
+      "name": "Idukki",
+      "slug": "idukki-taluk",
+      "parentSlug": "idukki",
+      "sortOrder": 4
+    },
+    {
+      "name": "Peerumade",
+      "slug": "peerumade",
+      "parentSlug": "idukki",
+      "sortOrder": 5
+    },
+    {
+      "name": "Ernakulam",
+      "slug": "ernakulam",
+      "parentSlug": null,
+      "sortOrder": 7
+    },
+    {
+      "name": "Aluva",
+      "slug": "aluva",
+      "parentSlug": "ernakulam",
+      "sortOrder": 1
+    },
+    {
+      "name": "Kothamangalam",
+      "slug": "kothamangalam",
+      "parentSlug": "ernakulam",
+      "sortOrder": 2
+    },
+    {
+      "name": "Kanayannur",
+      "slug": "kanayannur",
+      "parentSlug": "ernakulam",
+      "sortOrder": 3
+    },
+    {
+      "name": "Muvattupuzha",
+      "slug": "muvattupuzha",
+      "parentSlug": "ernakulam",
+      "sortOrder": 4
+    },
+    {
+      "name": "Kunnathunad",
+      "slug": "kunnathunad",
+      "parentSlug": "ernakulam",
+      "sortOrder": 5
+    },
+    {
+      "name": "Paravur",
+      "slug": "paravur",
+      "parentSlug": "ernakulam",
+      "sortOrder": 6
+    },
+    {
+      "name": "Kochi",
+      "slug": "kochi",
+      "parentSlug": "ernakulam",
+      "sortOrder": 7
+    },
+    {
+      "name": "Thrissur",
+      "slug": "thrissur",
+      "parentSlug": null,
+      "sortOrder": 8
+    },
+    {
+      "name": "Thrissur",
+      "slug": "thrissur-taluk",
+      "parentSlug": "thrissur",
+      "sortOrder": 1
+    },
+    {
+      "name": "Chavakkad",
+      "slug": "chavakkad",
+      "parentSlug": "thrissur",
+      "sortOrder": 2
+    },
+    {
+      "name": "Kunnamkulam",
+      "slug": "kunnamkulam",
+      "parentSlug": "thrissur",
+      "sortOrder": 3
+    },
+    {
+      "name": "Mukundapuram",
+      "slug": "mukundapuram",
+      "parentSlug": "thrissur",
+      "sortOrder": 4
+    },
+    {
+      "name": "Kodungallur",
+      "slug": "kodungallur",
+      "parentSlug": "thrissur",
+      "sortOrder": 5
+    },
+    {
+      "name": "Talappilly",
+      "slug": "talappilly",
+      "parentSlug": "thrissur",
+      "sortOrder": 6
+    },
+    {
+      "name": "Chalakudy",
+      "slug": "chalakudy",
+      "parentSlug": "thrissur",
+      "sortOrder": 7
+    },
+    {
+      "name": "Palakkad",
+      "slug": "palakkad",
+      "parentSlug": null,
+      "sortOrder": 9
+    },
+    {
+      "name": "Palakkad",
+      "slug": "palakkad-taluk",
+      "parentSlug": "palakkad",
+      "sortOrder": 1
+    },
+    {
+      "name": "Chittur",
+      "slug": "chittur",
+      "parentSlug": "palakkad",
+      "sortOrder": 2
+    },
+    {
+      "name": "Alathur",
+      "slug": "alathur",
+      "parentSlug": "palakkad",
+      "sortOrder": 3
+    },
+    {
+      "name": "Ottappalam",
+      "slug": "ottappalam",
+      "parentSlug": "palakkad",
+      "sortOrder": 4
+    },
+    {
+      "name": "Mannarkkad",
+      "slug": "mannarkkad",
+      "parentSlug": "palakkad",
+      "sortOrder": 5
+    },
+    {
+      "name": "Pattambi",
+      "slug": "pattambi",
+      "parentSlug": "palakkad",
+      "sortOrder": 6
+    },
+    {
+      "name": "Malappuram",
+      "slug": "malappuram",
+      "parentSlug": null,
+      "sortOrder": 10
+    },
+    {
+      "name": "Eranad",
+      "slug": "eranad",
+      "parentSlug": "malappuram",
+      "sortOrder": 1
+    },
+    {
+      "name": "Perinthalmanna",
+      "slug": "perinthalmanna",
+      "parentSlug": "malappuram",
+      "sortOrder": 2
+    },
+    {
+      "name": "Tirur",
+      "slug": "tirur",
+      "parentSlug": "malappuram",
+      "sortOrder": 3
+    },
+    {
+      "name": "Tirurangadi",
+      "slug": "tirurangadi",
+      "parentSlug": "malappuram",
+      "sortOrder": 4
+    },
+    {
+      "name": "Ponnani",
+      "slug": "ponnani",
+      "parentSlug": "malappuram",
+      "sortOrder": 5
+    },
+    {
+      "name": "Nilambur",
+      "slug": "nilambur",
+      "parentSlug": "malappuram",
+      "sortOrder": 6
+    },
+    {
+      "name": "Kondotty",
+      "slug": "kondotty",
+      "parentSlug": "malappuram",
+      "sortOrder": 7
+    },
+    {
+      "name": "Kozhikode",
+      "slug": "kozhikode",
+      "parentSlug": null,
+      "sortOrder": 11
+    },
+    {
+      "name": "Kozhikode",
+      "slug": "kozhikode-taluk",
+      "parentSlug": "kozhikode",
+      "sortOrder": 1
+    },
+    {
+      "name": "Vadakara",
+      "slug": "vadakara",
+      "parentSlug": "kozhikode",
+      "sortOrder": 2
+    },
+    {
+      "name": "Koyilandy",
+      "slug": "koyilandy",
+      "parentSlug": "kozhikode",
+      "sortOrder": 3
+    },
+    {
+      "name": "Thamarassery",
+      "slug": "thamarassery",
+      "parentSlug": "kozhikode",
+      "sortOrder": 4
+    },
+    {
+      "name": "Wayanad",
+      "slug": "wayanad",
+      "parentSlug": null,
+      "sortOrder": 12
+    },
+    {
+      "name": "Mananthavady",
+      "slug": "mananthavady",
+      "parentSlug": "wayanad",
+      "sortOrder": 1
+    },
+    {
+      "name": "Sulthan Bathery",
+      "slug": "sulthan-bathery",
+      "parentSlug": "wayanad",
+      "sortOrder": 2
+    },
+    {
+      "name": "Vythiri",
+      "slug": "vythiri",
+      "parentSlug": "wayanad",
+      "sortOrder": 3
+    },
+    {
+      "name": "Kannur",
+      "slug": "kannur",
+      "parentSlug": null,
+      "sortOrder": 13
+    },
+    {
+      "name": "Kannur",
+      "slug": "kannur-taluk",
+      "parentSlug": "kannur",
+      "sortOrder": 1
+    },
+    {
+      "name": "Thalassery",
+      "slug": "thalassery",
+      "parentSlug": "kannur",
+      "sortOrder": 2
+    },
+    {
+      "name": "Taliparamba",
+      "slug": "taliparamba",
+      "parentSlug": "kannur",
+      "sortOrder": 3
+    },
+    {
+      "name": "Payyannur",
+      "slug": "payyannur",
+      "parentSlug": "kannur",
+      "sortOrder": 4
+    },
+    {
+      "name": "Iritty",
+      "slug": "iritty",
+      "parentSlug": "kannur",
+      "sortOrder": 5
+    },
+    {
+      "name": "Kasaragod",
+      "slug": "kasaragod",
+      "parentSlug": null,
+      "sortOrder": 14
+    },
+    {
+      "name": "Kasaragod",
+      "slug": "kasaragod-taluk",
+      "parentSlug": "kasaragod",
+      "sortOrder": 1
+    },
+    {
+      "name": "Hosdurg",
+      "slug": "hosdurg",
+      "parentSlug": "kasaragod",
+      "sortOrder": 2
+    }
+  ]
+}

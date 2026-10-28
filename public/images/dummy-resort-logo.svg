@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <rect width="100" height="100" rx="20" fill="#ffffff" />
+  <circle cx="50" cy="35" r="16" fill="#047857" opacity="0.15" />
+  <path d="M50 20L62 32H38L50 20Z" fill="#047857" />
+  <path d="M42 32V42H58V32" stroke="#047857" stroke-width="2.5" fill="none" />
+  <path d="M47 42V36H53V42" fill="#047857" />
+  <text x="50" y="68" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="12" text-anchor="middle" fill="#065F46" letter-spacing="1">GRAND</text>
+  <text x="50" y="80" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="8" text-anchor="middle" fill="#047857" letter-spacing="0.5">RESORT</text>
+</svg>
+
