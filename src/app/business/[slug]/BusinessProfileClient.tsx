@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useLayoutEffect, useRef, useId } from "react";
+import { useState, useEffect, useLayoutEffect, useMemo, useRef, useId } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import {
@@ -37,6 +37,7 @@ import {
 import Header from "@/components/Header";
 import { SocialIcon } from "@/components/SocialIcon";
 import { telHref, normalizeSocialUrl, PLATFORM_META, SocialPlatform } from "@/lib/contact";
+import { splitBusinessPhotos } from "@/lib/photos";
 
 export interface BusinessPhoto {
   id: number;
@@ -327,6 +328,35 @@ function ServiceCard({ service }: { service: BusinessService }) {
       </div>
     </div>
   );
+}
+
+// Cloudinary URL detection (res.cloudinary.com host and /upload/ path)
+function isCloudinaryUrl(url: string | null | undefined): boolean {
+  if (!url) return false;
+  try {
+    const parsed = new URL(url);
+    return parsed.hostname === "res.cloudinary.com" && parsed.pathname.includes("/upload/");
+  } catch {
+    return false;
+  }
+}
+
+// Gallery thumbnail optimization (f_auto,q_auto,c_fill,w_600,h_450)
+function getGalleryThumbnailUrl(url: string | null | undefined): string {
+  if (!url) return "";
+  if (isCloudinaryUrl(url)) {
+    return url.replace("/upload/", "/upload/f_auto,q_auto,c_fill,w_600,h_450/");
+  }
+  return url;
+}
+
+// Lightbox image optimization (f_auto,q_auto,c_limit,w_1600)
+function getLightboxImageUrl(url: string | null | undefined): string {
+  if (!url) return "";
+  if (isCloudinaryUrl(url)) {
+    return url.replace("/upload/", "/upload/f_auto,q_auto,c_limit,w_1600/");
+  }
+  return url;
 }
 
 export default function BusinessProfileClient({
@@ -630,17 +660,45 @@ export default function BusinessProfileClient({
     business.location?.parent?.name
   );
 
+  // Split photos into logo and gallery; gallery excludes the logo row
+  const galleryPhotos = useMemo(
+    () => splitBusinessPhotos(business.businessPhotos).gallery,
+    [business.businessPhotos]
+  );
+
   // Lightbox handlers
   const openLightbox = (index: number) => setLightboxIndex(index);
   const closeLightbox = () => setLightboxIndex(null);
   const prevLightbox = () => {
-    if (lightboxIndex === null || !business.businessPhotos.length) return;
-    setLightboxIndex((prev) => (prev! === 0 ? business.businessPhotos.length - 1 : prev! - 1));
+    if (lightboxIndex === null || !galleryPhotos.length) return;
+    setLightboxIndex((prev) => (prev! === 0 ? galleryPhotos.length - 1 : prev! - 1));
   };
   const nextLightbox = () => {
-    if (lightboxIndex === null || !business.businessPhotos.length) return;
-    setLightboxIndex((prev) => (prev! === business.businessPhotos.length - 1 ? 0 : prev! + 1));
+    if (lightboxIndex === null || !galleryPhotos.length) return;
+    setLightboxIndex((prev) => (prev! === galleryPhotos.length - 1 ? 0 : prev! + 1));
   };
+
+  // Preload lightbox neighbours (only previous and next)
+  useEffect(() => {
+    if (lightboxIndex === null || galleryPhotos.length <= 1) return;
+    const prevIdx = lightboxIndex === 0 ? galleryPhotos.length - 1 : lightboxIndex - 1;
+    const nextIdx = lightboxIndex === galleryPhotos.length - 1 ? 0 : lightboxIndex + 1;
+
+    const neighbourUrls = new Set<string>();
+    if (galleryPhotos[prevIdx]) {
+      neighbourUrls.add(getLightboxImageUrl(galleryPhotos[prevIdx].imageUrl));
+    }
+    if (galleryPhotos[nextIdx]) {
+      neighbourUrls.add(getLightboxImageUrl(galleryPhotos[nextIdx].imageUrl));
+    }
+
+    neighbourUrls.forEach((url) => {
+      if (url && typeof window !== "undefined") {
+        const img = new window.Image();
+        img.src = url;
+      }
+    });
+  }, [lightboxIndex, galleryPhotos]);
 
   // Keyboard navigation for Lightbox
   useEffect(() => {
@@ -653,7 +711,7 @@ export default function BusinessProfileClient({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lightboxIndex]);
+  }, [lightboxIndex, galleryPhotos]);
 
   // Share Profile link
   const handleShare = async () => {
@@ -1083,7 +1141,7 @@ export default function BusinessProfileClient({
         {/* ========================================================= */}
         {/* SECTION 5: GALLERY (Adaptive layout: 1, 2, 3+ photos)     */}
         {/* ========================================================= */}
-        {business.businessPhotos && business.businessPhotos.length > 0 && (
+        {galleryPhotos && galleryPhotos.length > 0 && (
           <section id="gallery" className="bg-white rounded-2xl py-4 px-3.5 sm:py-5 sm:px-6 space-y-3.5 border border-slate-100 shadow-2xs">
             <div className="space-y-0.5">
               <h2 className="text-sm sm:text-base font-semibold text-[#000B4D] flex items-center gap-1.5">
@@ -1091,12 +1149,12 @@ export default function BusinessProfileClient({
                 Take a look around
               </h2>
               <p className="text-xs text-slate-500 font-normal">
-                Photo highlights and venue glimpses ({business.businessPhotos.length} {business.businessPhotos.length === 1 ? "photo" : "photos"}).
+                Photo highlights and venue glimpses ({galleryPhotos.length} {galleryPhotos.length === 1 ? "photo" : "photos"}).
               </p>
             </div>
 
             {/* 1 Photo Layout: One large 16:10 image filling section width */}
-            {business.businessPhotos.length === 1 && (
+            {galleryPhotos.length === 1 && (
               <div className="pt-0.5">
                 <button
                   type="button"
@@ -1104,8 +1162,10 @@ export default function BusinessProfileClient({
                   className="group relative w-full aspect-[16/10] max-h-[500px] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 text-left focus:outline-none focus:ring-2 focus:ring-[#1A8A2E] cursor-pointer shadow-xs block"
                 >
                   <img
-                    src={business.businessPhotos[0].imageUrl}
-                    alt={business.businessPhotos[0].altText || business.name}
+                    src={getGalleryThumbnailUrl(galleryPhotos[0].imageUrl)}
+                    alt={galleryPhotos[0].altText || business.name}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
                   />
                   {/* Desktop hover label */}
@@ -1123,9 +1183,9 @@ export default function BusinessProfileClient({
             )}
 
             {/* 2 Photos Layout: Two equal columns */}
-            {business.businessPhotos.length === 2 && (
+            {galleryPhotos.length === 2 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-1">
-                {business.businessPhotos.map((photo, idx) => (
+                {galleryPhotos.map((photo, idx) => (
                   <button
                     key={photo.id}
                     type="button"
@@ -1133,8 +1193,10 @@ export default function BusinessProfileClient({
                     className="group relative aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 text-left focus:outline-none focus:ring-2 focus:ring-[#1A8A2E] cursor-pointer shadow-xs block"
                   >
                     <img
-                      src={photo.imageUrl}
+                      src={getGalleryThumbnailUrl(photo.imageUrl)}
                       alt={photo.altText || business.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="hidden md:flex absolute inset-0 bg-[#000B4D]/30 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity items-center justify-center">
@@ -1151,9 +1213,9 @@ export default function BusinessProfileClient({
             )}
 
             {/* 3+ Photos Layout: Responsive grid (2 cols mobile, 3 desktop) */}
-            {business.businessPhotos.length >= 3 && (
+            {galleryPhotos.length >= 3 && (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 pt-1">
-                {business.businessPhotos.map((photo, idx) => (
+                {galleryPhotos.map((photo, idx) => (
                   <button
                     key={photo.id}
                     type="button"
@@ -1161,8 +1223,10 @@ export default function BusinessProfileClient({
                     className="group relative aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 text-left focus:outline-none focus:ring-2 focus:ring-[#1A8A2E] cursor-pointer shadow-xs block"
                   >
                     <img
-                      src={photo.imageUrl}
+                      src={getGalleryThumbnailUrl(photo.imageUrl)}
                       alt={photo.altText || business.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="hidden md:flex absolute inset-0 bg-[#000B4D]/30 opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-opacity items-center justify-center">
@@ -1985,7 +2049,7 @@ export default function BusinessProfileClient({
                     </a>
                   </li>
                 )}
-                {business.businessPhotos && business.businessPhotos.length > 0 && (
+                {galleryPhotos && galleryPhotos.length > 0 && (
                   <li>
                     <a
                       href="#gallery"
@@ -2137,7 +2201,7 @@ export default function BusinessProfileClient({
       </footer>
 
       {/* Lightbox Modal (Logic & interactions 100% intact) */}
-      {lightboxIndex !== null && business.businessPhotos[lightboxIndex] && (
+      {lightboxIndex !== null && galleryPhotos[lightboxIndex] && (
         <div className="fixed inset-0 z-50 bg-[#000B4D]/90 backdrop-blur-md flex items-center justify-center p-4">
           <button
             type="button"
@@ -2168,16 +2232,16 @@ export default function BusinessProfileClient({
 
           <div className="max-w-4xl max-h-[85vh] flex flex-col items-center justify-center">
             <img
-              src={business.businessPhotos[lightboxIndex].imageUrl}
-              alt={business.businessPhotos[lightboxIndex].altText || business.name}
+              src={getLightboxImageUrl(galleryPhotos[lightboxIndex].imageUrl)}
+              alt={galleryPhotos[lightboxIndex].altText || business.name}
               className="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-2xl"
             />
             <div className="mt-4 text-white text-sm font-semibold flex items-center gap-3 bg-white/10 px-5 py-2 rounded-full border border-white/10">
               <span>
-                Photo {lightboxIndex + 1} of {business.businessPhotos.length}
+                Photo {lightboxIndex + 1} of {galleryPhotos.length}
               </span>
-              {business.businessPhotos[lightboxIndex].altText && (
-                <span>• {business.businessPhotos[lightboxIndex].altText}</span>
+              {galleryPhotos[lightboxIndex].altText && (
+                <span>• {galleryPhotos[lightboxIndex].altText}</span>
               )}
             </div>
           </div>

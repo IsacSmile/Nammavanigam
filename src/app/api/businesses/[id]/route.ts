@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { prisma } from "@/lib/prisma";
 import { isValidCloudinaryUrl } from "@/lib/cloudinary-url";
+import { MAX_GALLERY_PHOTOS } from "@/lib/limits";
 import {
   validateAdditionalPhones,
   validateSocialLinks,
@@ -207,16 +208,27 @@ export async function PUT(
       }
     }
 
-    if (Array.isArray(photoUrls)) {
-      for (const url of photoUrls) {
-        if (url && typeof url === "string" && url.trim()) {
-          const trimmedUrl = url.trim();
-          if (!existingPhotoUrls.has(trimmedUrl) && !isValidCloudinaryUrl(trimmedUrl)) {
-            return NextResponse.json(
-              { error: "Invalid gallery photo URL. Only images hosted on this project's Cloudinary cloud are allowed." },
-              { status: 400 }
-            );
-          }
+    let cleanedPhotoUrls: string[] | undefined = undefined;
+    if (photoUrls !== undefined) {
+      cleanedPhotoUrls = Array.isArray(photoUrls)
+        ? photoUrls
+            .filter((url: any) => typeof url === "string" && url.trim().length > 0)
+            .map((url: string) => url.trim())
+        : [];
+
+      if (cleanedPhotoUrls.length > MAX_GALLERY_PHOTOS) {
+        return NextResponse.json(
+          { error: "You can add up to 15 gallery photos." },
+          { status: 400 }
+        );
+      }
+
+      for (const trimmedUrl of cleanedPhotoUrls) {
+        if (!existingPhotoUrls.has(trimmedUrl) && !isValidCloudinaryUrl(trimmedUrl)) {
+          return NextResponse.json(
+            { error: "Invalid gallery photo URL. Only images hosted on this project's Cloudinary cloud are allowed." },
+            { status: 400 }
+          );
         }
       }
     }
@@ -431,18 +443,15 @@ export async function PUT(
         });
       }
 
-      if (Array.isArray(photoUrls) && photoUrls.length > 0) {
-        photoUrls
-          .filter((url: any) => typeof url === "string" && url.trim())
-          .slice(0, 8)
-          .forEach((url: string, idx: number) => {
-            photoRecords!.push({
-              businessId,
-              imageUrl: url.trim(),
-              altText: `${trimmedName} Photo ${idx + 1}`,
-              sortOrder: idx + 1,
-            });
+      if (cleanedPhotoUrls && cleanedPhotoUrls.length > 0) {
+        cleanedPhotoUrls.forEach((url: string, idx: number) => {
+          photoRecords!.push({
+            businessId,
+            imageUrl: url,
+            altText: `${trimmedName} Photo ${idx + 1}`,
+            sortOrder: idx + 1,
           });
+        });
       }
     }
 

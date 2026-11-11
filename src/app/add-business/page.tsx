@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 import CustomSelect from "@/components/CustomSelect";
+import { MAX_GALLERY_PHOTOS } from "@/lib/limits";
 import { getLocationSelectGroups, RawLocationItem } from "@/lib/location-options";
 import AdditionalPhonesInput, { PhoneRow } from "@/components/AdditionalPhonesInput";
 import SocialLinksInput from "@/components/SocialLinksInput";
@@ -469,8 +470,9 @@ export default function AddBusinessPage() {
     setPhotoError(null);
     setStepError(null);
 
-    if (photoUrls.length + files.length > 8) {
-      const msg = "Maximum 8 gallery photos allowed.";
+    if (photoUrls.length + files.length > MAX_GALLERY_PHOTOS) {
+      const remaining = Math.max(0, MAX_GALLERY_PHOTOS - photoUrls.length);
+      const msg = `You can add ${remaining} more photo(s) (maximum ${MAX_GALLERY_PHOTOS}).`;
       setPhotoError(msg);
       setStepError(msg);
       return;
@@ -505,29 +507,39 @@ export default function AddBusinessPage() {
 
     setUploadingPhoto(true);
 
+    let uploadedCount = 0;
     try {
-      const newUrls: string[] = [];
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const formData = new FormData();
         formData.append("file", file);
 
-        const res = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-        const data = await res.json();
-        if (res.ok && data.url) {
-          newUrls.push(data.url);
-        } else {
-          throw new Error(data.error || `Failed to upload "${file.name}".`);
+        let data: any;
+        try {
+          const res = await fetch("/api/upload", {
+            method: "POST",
+            body: formData,
+          });
+          data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.url) {
+            const reason =
+              data?.error ||
+              (res.statusText
+                ? `Upload failed (${res.status} ${res.statusText})`
+                : `Failed to upload "${file.name}".`);
+            throw new Error(reason);
+          }
+        } catch (uploadErr: any) {
+          const reason = uploadErr.message || `Failed to upload "${file.name}".`;
+          const msg = `${uploadedCount} of ${files.length} uploaded. Failed: ${file.name}: ${reason}`;
+          setPhotoError(msg);
+          setStepError(msg);
+          return;
         }
+
+        setPhotoUrls((prev) => [...prev, data.url]);
+        uploadedCount++;
       }
-      setPhotoUrls((prev) => [...prev, ...newUrls]);
-    } catch (err: any) {
-      const msg = err.message || "Failed to upload photo(s).";
-      setPhotoError(msg);
-      setStepError(msg);
     } finally {
       setUploadingPhoto(false);
     }
@@ -1539,7 +1551,7 @@ export default function AddBusinessPage() {
                   Step 6: Logo & Gallery Photos
                 </h2>
                 <p className="text-xs text-slate-500">
-                  Upload your business logo and up to 8 showcase photos (hosted via Cloudinary).
+                  Upload your business logo and up to {MAX_GALLERY_PHOTOS} showcase photos (hosted via Cloudinary).
                 </p>
               </div>
 
@@ -1720,11 +1732,11 @@ export default function AddBusinessPage() {
                         Gallery Showcase Photos
                       </label>
                       <p className="text-[11px] text-slate-400 leading-relaxed">
-                        Upload up to 8 photos showcasing your storefront, products, or team ({photoUrls.length}/8 uploaded)
+                        Upload up to {MAX_GALLERY_PHOTOS} photos showcasing your storefront, products, or team ({photoUrls.length}/{MAX_GALLERY_PHOTOS} uploaded)
                       </p>
                     </div>
 
-                    {photoUrls.length < 8 && (
+                    {photoUrls.length < MAX_GALLERY_PHOTOS ? (
                       <div className="flex flex-col items-start sm:items-end gap-1.5 shrink-0">
                         <label className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl cursor-pointer transition-colors shrink-0 border border-slate-200/80">
                           {uploadingPhoto ? (
@@ -1747,6 +1759,18 @@ export default function AddBusinessPage() {
                             className="hidden"
                           />
                         </label>
+                        {photoError && (
+                          <p className="text-[11px] text-rose-600 font-medium flex items-center gap-1">
+                            <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                            {photoError}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-start sm:items-end gap-1.5 shrink-0">
+                        <p className="text-xs text-slate-500 font-medium">
+                          Maximum reached ({MAX_GALLERY_PHOTOS}/{MAX_GALLERY_PHOTOS}). Remove a photo to add another.
+                        </p>
                         {photoError && (
                           <p className="text-[11px] text-rose-600 font-medium flex items-center gap-1">
                             <AlertCircle className="w-3.5 h-3.5 shrink-0" />

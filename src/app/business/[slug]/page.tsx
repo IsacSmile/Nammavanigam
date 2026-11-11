@@ -90,6 +90,12 @@ export default async function BusinessProfilePage({
       },
       businessServices: true,
       businessPhotos: {
+        select: {
+          id: true,
+          imageUrl: true,
+          altText: true,
+          sortOrder: true,
+        },
         orderBy: { sortOrder: "asc" },
       },
       businessHours: true,

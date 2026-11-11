@@ -29,6 +29,7 @@ import {
 import Header from "@/components/Header";
 import { SocialIcon } from "@/components/SocialIcon";
 import { PLATFORM_META, SocialPlatform } from "@/lib/contact";
+import { splitBusinessPhotos } from "@/lib/photos";
 
 export interface BusinessPhoto {
   id: number;
@@ -558,24 +559,29 @@ export default function MyBusinessesPage() {
               </div>
 
               {/* Photo Gallery */}
-              {previewBusiness.businessPhotos && previewBusiness.businessPhotos.length > 0 && (
-                <div className="space-y-2">
-                  <h3 className="font-bold text-brand-navy uppercase text-[11px] flex items-center gap-1.5">
-                    <ImageIcon className="w-4 h-4 text-brand-blue" /> Uploaded Photos ({previewBusiness.businessPhotos.length})
-                  </h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {previewBusiness.businessPhotos.map((photo) => (
-                      <div key={photo.id} className="h-24 sm:h-28 rounded-lg overflow-hidden bg-slate-100 border border-slate-200">
-                        <img
-                          src={photo.imageUrl}
-                          alt={photo.altText || previewBusiness.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ))}
+              {(() => {
+                const previewGallery = splitBusinessPhotos(previewBusiness.businessPhotos).gallery;
+                if (!previewGallery || previewGallery.length === 0) return null;
+
+                return (
+                  <div className="space-y-2">
+                    <h3 className="font-bold text-brand-navy uppercase text-[11px] flex items-center gap-1.5">
+                      <ImageIcon className="w-4 h-4 text-brand-blue" /> Uploaded Photos ({previewGallery.length})
+                    </h3>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {previewGallery.map((photo) => (
+                        <div key={photo.id} className="h-24 sm:h-28 rounded-lg overflow-hidden bg-slate-100 border border-slate-200">
+                          <img
+                            src={photo.imageUrl}
+                            alt={photo.altText || previewBusiness.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* Services */}
               {previewBusiness.businessServices && previewBusiness.businessServices.length > 0 && (

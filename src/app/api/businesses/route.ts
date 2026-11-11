@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { prisma } from "@/lib/prisma";
 import { isValidCloudinaryUrl } from "@/lib/cloudinary-url";
+import { MAX_GALLERY_PHOTOS } from "@/lib/limits";
 import { resolveLocationSlug } from "@/lib/locations";
 import {
   validateAdditionalPhones,
@@ -232,16 +233,25 @@ export async function POST(req: Request) {
     }
 
     // Validate gallery photo URLs if present
-    if (Array.isArray(photoUrls)) {
-      for (const url of photoUrls) {
-        if (url && typeof url === "string" && url.trim()) {
-          if (!isValidCloudinaryUrl(url.trim())) {
-            return NextResponse.json(
-              { error: "Invalid gallery photo URL. Only images hosted on this project's Cloudinary cloud are allowed." },
-              { status: 400 }
-            );
-          }
-        }
+    const cleanedPhotoUrls = Array.isArray(photoUrls)
+      ? photoUrls
+          .filter((url: any) => typeof url === "string" && url.trim().length > 0)
+          .map((url: string) => url.trim())
+      : [];
+
+    if (cleanedPhotoUrls.length > MAX_GALLERY_PHOTOS) {
+      return NextResponse.json(
+        { error: "You can add up to 15 gallery photos." },
+        { status: 400 }
+      );
+    }
+
+    for (const url of cleanedPhotoUrls) {
+      if (!isValidCloudinaryUrl(url)) {
+        return NextResponse.json(
+          { error: "Invalid gallery photo URL. Only images hosted on this project's Cloudinary cloud are allowed." },
+          { status: 400 }
+        );
       }
     }
 
@@ -345,17 +355,14 @@ export async function POST(req: Request) {
         sortOrder: 0,
       });
     }
-    if (Array.isArray(photoUrls) && photoUrls.length > 0) {
-      photoUrls
-        .filter((url: any) => typeof url === "string" && url.trim())
-        .slice(0, 8)
-        .forEach((url: string, idx: number) => {
-          photoRecords.push({
-            imageUrl: url.trim(),
-            altText: `${name.trim()} Photo ${idx + 1}`,
-            sortOrder: idx + 1,
-          });
+    if (cleanedPhotoUrls.length > 0) {
+      cleanedPhotoUrls.forEach((url: string, idx: number) => {
+        photoRecords.push({
+          imageUrl: url,
+          altText: `${name.trim()} Photo ${idx + 1}`,
+          sortOrder: idx + 1,
         });
+      });
     }
 
     const phoneRecords =
