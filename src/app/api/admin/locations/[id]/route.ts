@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/auth";
 
@@ -61,6 +62,12 @@ export async function PUT(
       },
     });
 
+    try {
+      revalidatePath("/", "layout");
+    } catch (revalidateError) {
+      console.error("Failed to revalidate layout:", revalidateError);
+    }
+
     return NextResponse.json(updatedLocation);
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Failed to update location" }, { status: 500 });
@@ -89,6 +96,12 @@ export async function DELETE(
     await prisma.location.delete({
       where: { id: locationId },
     });
+
+    try {
+      revalidatePath("/", "layout");
+    } catch (revalidateError) {
+      console.error("Failed to revalidate layout:", revalidateError);
+    }
 
     return NextResponse.json({ success: true, id: locationId });
   } catch (error: any) {

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 // GET /api/locations - Fetch active locations ordered by sortOrder
 export async function GET() {
   try {
@@ -21,7 +23,11 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(locations);
+    return NextResponse.json(locations, {
+      headers: {
+        "Cache-Control": "no-store",
+      },
+    });
   } catch (error: any) {
     console.error("Failed to fetch locations:", error);
     return NextResponse.json(

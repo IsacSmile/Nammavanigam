@@ -204,8 +204,8 @@ export default function EditBusinessPage() {
 
       try {
         const [catRes, locRes, bizRes] = await Promise.all([
-          fetch("/api/categories"),
-          fetch("/api/locations"),
+          fetch("/api/categories", { cache: "no-store" }),
+          fetch("/api/locations", { cache: "no-store" }),
           fetch(`/api/businesses/${businessId}`),
         ]);
 

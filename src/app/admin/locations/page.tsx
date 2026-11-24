@@ -48,7 +48,7 @@ export default function AdminLocationsPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/admin/locations");
+      const res = await fetch("/api/admin/locations", { cache: "no-store" });
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
       setLocations(data);

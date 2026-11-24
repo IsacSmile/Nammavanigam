@@ -126,8 +126,8 @@ export default function AdminAllBusinessesPage() {
     const fetchMetadata = async () => {
       try {
         const [catRes, locRes] = await Promise.all([
-          fetch("/api/admin/categories"),
-          fetch("/api/admin/locations"),
+          fetch("/api/admin/categories", { cache: "no-store" }),
+          fetch("/api/admin/locations", { cache: "no-store" }),
         ]);
         if (catRes.ok) setCategories(await catRes.json());
         if (locRes.ok) setLocations(await locRes.json());

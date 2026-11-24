@@ -181,8 +181,8 @@ export default function AddBusinessPage() {
     async function fetchData() {
       try {
         const [catRes, locRes] = await Promise.all([
-          fetch("/api/categories"),
-          fetch("/api/locations"),
+          fetch("/api/categories", { cache: "no-store" }),
+          fetch("/api/locations", { cache: "no-store" }),
         ]);
         if (catRes.ok) {
           const catData = await catRes.json();

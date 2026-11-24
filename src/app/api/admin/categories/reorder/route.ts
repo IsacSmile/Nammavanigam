@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/auth";
 
@@ -22,6 +23,12 @@ export async function POST(request: Request) {
     );
 
     await prisma.$transaction(updatePromises);
+
+    try {
+      revalidatePath("/", "layout");
+    } catch (revalidateError) {
+      console.error("Failed to revalidate layout:", revalidateError);
+    }
 
     return NextResponse.json({ success: true, count: items.length });
   } catch (error: any) {

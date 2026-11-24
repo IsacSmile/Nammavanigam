@@ -49,7 +49,7 @@ export default function AdminCategoriesPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/admin/categories");
+      const res = await fetch("/api/admin/categories", { cache: "no-store" });
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
       setCategories(data);

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { isAdmin } from "@/lib/auth";
 
@@ -78,6 +79,12 @@ export async function POST(request: Request) {
         sortOrder: finalSortOrder,
       },
     });
+
+    try {
+      revalidatePath("/", "layout");
+    } catch (revalidateError) {
+      console.error("Failed to revalidate layout:", revalidateError);
+    }
 
     return NextResponse.json(location, { status: 201 });
   } catch (error: any) {
